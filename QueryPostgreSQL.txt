@@ -1,0 +1,156 @@
+-----------------------------------------------------------------------------
+< Tables > DDL
+
+create table paciente(
+	IDpaciente serial,
+	nombre varchar(20),
+	apellidoP varchar(15), 
+	apellidoM varchar(15),
+	sexo varchar(1), 
+	edad int, 
+	domicilio varchar(30), 
+	telefono varchar(10),
+	correo varchar(30), 
+	ocupacion varchar(15),
+	residencia varchar(15), 
+    origen varchar(15), 
+    estado_civil varchar(15),
+	nombreSC varchar(50), 
+	parentesco varchar(20),
+	domicilioSC varchar(30), 
+	telefonoSC varchar(10),
+	cedula varchar(10),
+	CONSTRAINT FK_DOCTOR_CEDULA
+       FOREIGN KEY(cedula) 
+       REFERENCES doctor(cedula),
+	primary key(IDpaciente));
+	
+create table doctor(
+	cedula varchar(10) default '1234567890', 
+	nombre varchar(20) default 'Scarlett Valeria', 
+	apellidoP varchar(15) default 'Lamas',
+	apellidoM varchar(15) default 'Abbadie',
+	sexo varchar(1) default 'M',
+	telefono varchar(10) default '3317746233',
+	primary key(cedula));	
+	
+create table cita(
+ IDpaciente serial,
+ cedula varchar(10),
+ fechahoracita timestamp,
+ CONSTRAINT FK_PACIENTE_ID
+       FOREIGN KEY(IDpaciente) 
+       REFERENCES paciente(IDpaciente),
+ CONSTRAINT FK_DOCTOR_CEDULA
+       FOREIGN KEY(cedula) 
+       REFERENCES doctor(cedula)
+);
+
+
+create table pago(
+    IDpaciente serial,
+	IDtratamiento serial,
+	cedula varchar(10),
+	fechaP date, 
+	CONSTRAINT FK_PACIENTE_ID
+       FOREIGN KEY(IDpaciente) 
+       REFERENCES paciente(IDpaciente),
+	CONSTRAINT FK_TRATAMIENTO_ID
+       FOREIGN KEY(IDtratamiento) 
+       REFERENCES tratamiento(IDtratamiento),
+    CONSTRAINT FK_DOCTOR_CEDULA
+       FOREIGN KEY(cedula) 
+       REFERENCES doctor(cedula),
+	primary key(fechaP));
+
+create table tratamiento(
+        IDpaciente serial, 
+	IDtratamiento serial,
+	nombreT varchar(50), 
+	costo int, 
+	medicamentos varchar(100),
+	descripción varchar(100), 
+	cedula varchar(10),
+	fechaTratamiento date,
+	CONSTRAINT FK_DOCTOR_CEDULA
+       FOREIGN KEY(cedula) 
+       REFERENCES doctor(cedula),
+	primary key(IDtratamiento));
+
+create table vacunas(
+  IDpaciente serial,
+  tipo_vacuna varchar(30),
+  fechavacuna date,
+  CONSTRAINT FK_PACIENTE_ID
+       FOREIGN KEY(IDpaciente) 
+       REFERENCES paciente(IDpaciente),
+   primary key(tipo_vacuna)
+);
+
+
+create table problemas_cronicos(
+   IDpaciente serial,
+   problemas_cronicos varchar(50),
+   CONSTRAINT FK_PACIENTE_ID
+       FOREIGN KEY(IDpaciente) 
+       REFERENCES paciente(IDpaciente),
+   primary key(problemas_cronicos)
+);
+
+create table alergias(
+    IDpaciente serial,
+	alergias varchar(50),
+	CONSTRAINT FK_PACIENTE_ID
+       FOREIGN KEY(IDpaciente) 
+       REFERENCES paciente(IDpaciente),
+    primary key(alergias)
+);
+
+//Tabla que controla quien puede hacer login en la BD
+create table login_datos(
+   iduser serial,
+   usuario varchar(30),
+   pass varchar(30),
+   primary key(iduser)
+);
+insert into login_datos
+values(2,'Scarlett Valeria','1234')
+
+
+  //DML
+
+ < Query INSERT >
+
+insert into tratamiento (IDpaciente, IDtratamiento, nombreT, costo, medicamentos, descripción, cedula, fechaTratamiento) values (%s,%s,%s,%s,%s,%s,%s,%s)
+insert into problemas_cronicos (IDpaciente, problemas_cronicos) values (%s,%s)
+
+ < Query SELECT > 
+
+select fechahoracita from cita where IDpaciente=%s and cedula =%s
+select tipo_vacuna, fechavacuna from vacunas where IDpaciente=%s
+
+ < Query UPDATE >
+
+update cita set fechahoracita=%s where IDpaciente=%s and cedula=%s 
+update problemas_cronicos set problemas_cronicos=%s where IDpaciente=%s
+
+ < Query DELETE >
+
+delete from cita where IDpaciente=%s and cedula=%s
+delete from tratamiento where IDpaciente=%s and IDtratamiento=%s
+
+ -Conclusion del curso y lo desarrollado en el proyecto: En la creación de 
+bases de datos se puede relacionar gran cantidad de datos que tengan relación entre si,
+y en lo que pueden ser consultados de manera rapida pudiendo seleccionarlos conforme
+las caracteristicas deseadas en lo que además, mediante una interfaz grafica se puede
+tener mayor flexibilidad con la base de datos ya que permite que la mayoria de usuarios
+puedan acceder a ella sin tener que usar algun lenguaje como SQL, haciendo posible
+una interación entre el usuario con la base de datos de manera directa, siendo las
+sentencias SQL necesarias en la base de datos para poder definirlos y manipularlos, 
+en lo que al implementar una interfaz grafica se toman en cuenta distintos lenguajes
+de programación y a la vez formularios, así como la conexión a la base de datos
+desde la interfaz grafica, por lo que se pudo aprender mas en el desarrollo del proyecto
+sobre las interfaces graficas usando una libreria de Python llamada "Tkinter"
+que puede crear y desarrollar aplicaciones de escritorio o interfaces graficas
+de usuario (GUi), así como los widgets que son los controles de las ventanas
+de aplicación que determinan distintas acciones en la App.
